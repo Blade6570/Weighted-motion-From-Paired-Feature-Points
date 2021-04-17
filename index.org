@@ -1,0 +1,146 @@
+#+TITLE: Single Source One Shot Reenactment using Weighted motion From Paired Feature Points
+#+HTML_HEAD: <link id ="pagestyle"  rel="stylesheet" type="text/css" href="./org.css"/>
+#+OPTIONS: toc:nil num:3 H:4 ^:nil pri:t email:t creator:t
+#+MACRO: kbd @@html:<kbd>$1</kbd>@@
+#+SUBTITLE: [[https://blade6570.github.io/soumyatripathy/][Soumya Tripathy]], [[https://users.aalto.fi/~kannalj1/][Juho Kannala]] and [[http://esa.rahtu.fi/][Esa Rahtu]] \\
+#+SUBTITLE: Code coming soon
+#+EMAIL: soumya.tripathy@tuni.fi
+#+begin_export html
+  <style>
+
+      .wrapper {
+        background-color: cyan;
+        border: none;
+        color: white;
+        padding: 0px 0px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 20px;
+        margin: 1px 100px;
+        cursor: pointer;
+	position: relative;
+	border-radius: 5px;
+	display: block;
+	width: 230px;
+	margin: 0px auto 0px auto;
+      }
+
+    </style>
+
+<div class="wrapper">
+  <a class="button" href="https://arxiv.org/abs/2104.03117">Paper</a>>
+  <a class="button" href="https://www.youtube.com/watch?v=fJn5WU01ITc">Video</a>>
+  <a class="button" href="https://github.com/">Code</a>
+</div>
+
+#+end_export
+
+
+* Abstract
+
+#+begin_left
+Image reenactment is a task where the target object in
+the source image imitates the motion represented in the driving image. One of the most common reenactment tasks is
+face image animation. The major challenge in the current
+face reenactment approaches is to distinguish between facial motion and identity. For this reason, the previous models struggle to produce high-quality animations if the driving and source identities are different (cross-person reenactment). We propose a new (face) reenactment model
+that learns shape-independent motion features in a selfsupervised setup. The motion is represented using a set of
+paired feature points extracted from the source and driving
+images simultaneously. The model is generalised to multiple reenactment tasks including faces and non-face objects
+using only a single source image. The extensive experiments
+show that the model faithfully transfers the driving motion
+to the source while retaining the source identity intact.\\
+\\
+\\
+\\
+#+end_left
+
+#+begin_export html
+<iframe style="display: block; margin: auto;" width="900" height="600" src="https://www.youtube.com/embed/fJn5WU01ITc" frameborder="0" allowfullscreen></iframe>
+#+end_export
+\\
+\\
+* Key Idea
+
+Face landmarks or keypoint based models[fn:1][fn:2] generate high-quality talking heads for self reenactment, but often fail in cross-person reenactment where the source and driving image have different identities. The main reason is that landmarks/keypoints are person-specific and carry facial shape information in terms of pose independent head geometry. Any differences of shape between source and driving heads are reflected in the facial motion (through landmarks or keypoints) and lead to a talking head that can not faithfully retain the identity of the source’s person. This effect can be seen in Figure 1 for faces and in Figure 3 for non-face objects using a keypoint based reenactment model like FOM [fn:1]. Furthermore, these models use each keypoint independently to affect the motion of its neighborhood pixels which makes the output highly dependent on the quality of the keypoints or land-
+marks. Any noisy keypoint prediction may severely distort the facial shape and thereby generate low-quality talking heads of the source as shown in Figure 1.
+
+#+CAPTION: . Illustration of drawbacks in keypoints/landmarks based reenactment models. In both cases, the reenactment is performed using FOM and the keypoints are drawn on the source and driving images. In Reenactment-1, the head structure difference between the source and driving is reflected in the output (bottom image) as the source’s facial structure and identity are distorted. In the Reenactment-2, one of the key points (in the red box) is slightly displaced manually from its original position to show its effect on the output. The degradation in the output quality shows the overall system performance is highly dependant on the keypoint detectors.
+#+attr_html: :width 900px
+#+ATTR_HTML: :style :left;margin:0px 0px 0px 0px;
+[[file:./g398.png]]
+
+Considering these issues, we propose a new (face) reenactment model that learns shape-independent motion features in a self-supervised setup. The motion is represented using a set of paired feature points extracted from the source and driving images simultaneously. The model is generalised to multi-
+ple reenactment tasks including faces and non-face objects using only a single source image. The complete block diagram of our model is given in Figure 3 and demo is presented in the youtube video attached in this page. The extensive experiments show that the model faithfully transfers the driving motion to the source while retaining the source identity intact. For further details please refer to our paper.
+
+#+CAPTION: The complete block diagram of the proposed reenactment model. It processes the source and driving images in five steps as 1. Encoding the images using image embedder, 2. Extracting paired-feature-points using a transformer, 3. Estimating the motion from paired-feature-points, 4. Converting the motion to the warping field and 5. Using the source image with the warping field in the generator to produce the final output. The transformer module is expanded at the bottom to showcase its building blocks in detail.
+#+attr_html: :width 1000px
+#+ATTR_HTML: :style :left;margin:0px 10px 0px 10px;
+[[file:./block_dig.png]]
+
+* Reenacting non-face objects
+
+The proposed formulation does not make any assumptions on the reenacted object type. Therefore, the same model can be also trained without modifications to reenact other objects besides faces.
+
+#+CAPTION: Qualitative comparison of proposed model with FOM on a. Tai-chi-HD, and b. MGif datasets. Our model keeps the source shape and driver’s motion intact at the output unlike FOM. More results can be seen in the video.
+#+attr_html: :width 1000px
+#+ATTR_HTML: :style :left;margin:0px 10px 0px 10px;
+[[file:./mgif.png]]
+
+** Some Examples on Bair action-conditioned robot pushing dataset
+
+#+begin_export html
+<style>
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+</style>
+
+<IMG SRC="./04_12_text.gif" class="center">
+<IMG SRC="./19_11_text.gif" class="center">
+<IMG SRC="./01_15_text.gif" class="center">
+#+end_export
+* Citation
+
+If you find this useful in your research work then please cite us as:
+
+#+BEGIN_SRC bibtex
+  @misc{tripathy2021single,
+	title={Single Source One Shot Reenactment using Weighted motion From Paired Feature Points},
+	author={Soumya Tripathy and Juho Kannala and Esa Rahtu},
+	year={2021},
+	eprint={2104.03117},
+	archivePrefix={arXiv},
+	primaryClass={cs.CV}}
+#+END_SRC
+
+* Other related works
+
+  #+BEGIN_SRC bibtex
+    @InProceedings{Tripathy_2021_WACV,
+    author = {Tripathy, Soumya and Kannala, Juho and Rahtu, Esa},
+    title = {FACEGAN: Facial Attribute Controllable rEenactment GAN},
+    booktitle = {Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)},
+    year = {2021}
+    }
+    @InProceedings{Tripathy_2020_WACV,
+    author = {Tripathy, Soumya and Kannala, Juho and Rahtu, Esa},
+    title = {ICface: Interpretable and Controllable Face Reenactment Using GANs},
+    booktitle = {Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)},
+    month = {March},
+    year = {2020}
+    }
+
+#+END_SRC
+
+[fn:1] Siarohin, A., Lathuilière, S., Tulyakov, S., Ricci, E., Sebe, N.: First order motion model for image animation. In: Conference on Neural Information Processing Systems (NeurIPS). (2019)
+
+[fn:2] Zakharov, E., Shysheya, A., Burkov, E., Lempitsky, V.: Few-shot adversarial learning of realistic neural talking head models. In: Proceedings of the IEEE International Conference on Computer Vision. (2019) 9459–9468.
+
+
+  #+begin_src emacs-lisp :results output :exports results
+  (setq org-html-postamble "<hr><footer><a href=\"https://research.tuni.fi/vision/\"><img alt=\"Tampere Logo\" style=\"border-width:0\" src=\"./Tampere-logo.jpg\" width=\"90\" height=\"90\"/></a><a rel=\"\license\" href=\"https://research.tuni.fi/vision/\"><img alt=\"aalto Logo\" style=\"border-width:0\" src=\"./download.png\" width=\"150\" height=\"100\"/></a><br />Created by Org version 9.3 with Emacs version 27.2 </footer> Last Updated %C Created by %a")
+  #+end_src
